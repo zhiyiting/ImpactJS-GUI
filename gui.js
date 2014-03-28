@@ -52,6 +52,10 @@ ig.module(
 					disable, name
 					disableGroup, name
 					disableAll
+					select, name
+					selectGroup, name
+					deSelect, name
+					deSelectGroup, name
 			*/
 			action: function(action, name) {
 				var collection = [];
@@ -110,15 +114,20 @@ ig.module(
 					// disableAll
 					if(action == 'disableAll')
 						ig.gui.elements[i].disabled = true;
+					// select a button
                     if(action == 'select' && ig.gui.elements[i].name == name)
                         ig.gui.elements[i].selected = true;
+                    // select button group
                     if(action == 'selectGroup' && ig.gui.elements[i].group == name)
                         ig.gui.elements[i].selected = true;
+                    // deselect a button
                     if(action == 'deSelect' && ig.gui.elements[i].name == name)
                         ig.gui.elements[i].selected = false;
+                    // deselect a button group
                     if(action == 'deSelectGroup' && ig.gui.elements[i].group == name)
                         ig.gui.elements[i].selected = false;
 				}
+				
 				if(collection.length) {
 					if(collection.length == 1) collection = collection[0];
 					return collection;
