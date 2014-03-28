@@ -236,7 +236,7 @@ ig.module(
 			if(ig.gui.initialized) return; else ig.gui.initialized = true;
 
 			// Bind
-//			ig.input.bind(ig.KEY.MOUSE1, 'leftclick');
+			ig.input.bind(ig.KEY.MOUSE1, 'leftclick');
 		}
 	});
 });
