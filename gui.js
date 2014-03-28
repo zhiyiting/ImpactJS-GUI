@@ -1,4 +1,6 @@
-ig.module('plugins.gui')
+ig.module(
+    'game.classes.gui'
+)
 .requires(
 	'impact.game'
 )
@@ -74,6 +76,7 @@ ig.module('plugins.gui')
 						ig.gui.elements[i].show = false;
 					// toggle
 					if(action == 'toggle' && ig.gui.elements[i].name == name) {
+
 						if (ig.gui.elements[i].show)
 							ig.gui.elements[i].show = false;
 						else
@@ -94,19 +97,27 @@ ig.module('plugins.gui')
 						ig.gui.elements.erase(ig.gui.elements[i]);
 					// enable
 					if(action == 'enable' && ig.gui.elements[i].name == name)
-						ig.gui.elements[i].disable = false;
+						ig.gui.elements[i].disabled = false;
 					// enableGroup
 					if(action == 'enableGroup' && ig.gui.elements[i].group == name)
-						ig.gui.elements[i].disable = false;
+						ig.gui.elements[i].disabled = false;
 					// disable
 					if(action == 'disable' && ig.gui.elements[i].name == name)
-						ig.gui.elements[i].disable = true;
+						ig.gui.elements[i].disabled = true;
 					// disableGroup
 					if(action == 'disableGroup' && ig.gui.elements[i].group == name)
-						ig.gui.elements[i].disable = true;
+						ig.gui.elements[i].disabled = true;
 					// disableAll
 					if(action == 'disableAll')
-						ig.gui.elements[i].disable = true;
+						ig.gui.elements[i].disabled = true;
+                    if(action == 'select' && ig.gui.elements[i].name == name)
+                        ig.gui.elements[i].selected = true;
+                    if(action == 'selectGroup' && ig.gui.elements[i].group == name)
+                        ig.gui.elements[i].selected = true;
+                    if(action == 'deSelect' && ig.gui.elements[i].name == name)
+                        ig.gui.elements[i].selected = false;
+                    if(action == 'deSelectGroup' && ig.gui.elements[i].group == name)
+                        ig.gui.elements[i].selected = false;
 				}
 				if(collection.length) {
 					if(collection.length == 1) collection = collection[0];
@@ -120,29 +131,29 @@ ig.module('plugins.gui')
 				if(element.active == undefined) element.active = false;
 				if(element.showTitle == undefined || (element.font == undefined)) element.showTitle = false;
 				if(element.showBind == undefined || (element.font == undefined)) element.showBind = false;
+                if(element.selected == undefined) element.selected = false;
 				
 				ig.gui.elements.push(element);
 			},
 
 			draw: function() {
 				for (var i = 0; i < ig.gui.elements.length; i++) {
-					var element = ig.gui.elements[i],
-						state = 'normal';
+					var element = ig.gui.elements[i];
+					var state = 'normal';
 
 					// Check position & state
 					if(!element.show) continue;
 					if(ig.gui.cursor.pos.x >= element.pos.x && ig.gui.cursor.pos.x <= element.pos.x + element.size.x &&
-						ig.gui.cursor.pos.y >= element.pos.y && ig.gui.cursor.pos.y <= element.pos.y + element.size.y &&
-						!element.disabled) {
+						ig.gui.cursor.pos.y >= element.pos.y && ig.gui.cursor.pos.y <= element.pos.y + element.size.y) {
 						state = 'hover';
 					}
 					
 					// Pressed by Mouse OR Keybind
-					if((state == 'hover' && (ig.input.state('mouse1') || ig.input.pressed('mouse1'))) || (ig.input.pressed(element.keybind))) {
+					if((state == 'hover' && (ig.input.state('leftclick') || ig.input.pressed('leftclick'))) || (ig.input.pressed(element.keybind))) {
 						state = 'active';
-						if(ig.input.state('mouse1') && typeof ig.gui.elements[i].mouseDown == 'function')
+						if(ig.input.state('leftclick') && typeof ig.gui.elements[i].mouseDown == 'function')
 							ig.gui.elements[i].mouseDown.call(element);
-						if(ig.input.pressed('mouse1') || ig.input.pressed(element.keybind)) {
+						if(ig.input.pressed('leftclick') || ig.input.pressed(element.keybind)) {
 							// Toggle (click)
 							if(element.toggle)
 								element.active = !element.active;
@@ -153,8 +164,8 @@ ig.module('plugins.gui')
 					}
 
 					// Toggle (state)
-					if(element.toggle && element.active)
-						state = 'active';
+					if(element.toggle && element.active || element.selected)
+                        state = 'active';
 
 					// Default state
 					if(ig.gui.elements[i].state[state] == undefined)
@@ -216,7 +227,7 @@ ig.module('plugins.gui')
 			if(ig.gui.initialized) return; else ig.gui.initialized = true;
 
 			// Bind
-			ig.input.bind(ig.KEY.MOUSE1, 'mouse1');
+//			ig.input.bind(ig.KEY.MOUSE1, 'leftclick');
 		}
 	});
 });
